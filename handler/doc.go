@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lethe/common"
 	"github.com/lethe/dao/mysql"
+	"github.com/sirupsen/logrus"
 )
 
 func DocList(c *gin.Context){
@@ -24,13 +25,21 @@ func DocList(c *gin.Context){
 func DocUpdate(c *gin.Context){
 	req := mysql.DocInfo{}
 	if err := c.BindJSON(&req); err != nil {
+		logrus.Info("err: %v",err)
 		c.JSON(200, common.ErrorResp(common.ParamsError, nil))
+		return
 	}
 	ctx := c.Request.Context()
+	var err error
 	if req.Id == 0 {
-		mysql.CreateDoc(ctx, req)
+		err = mysql.CreateDoc(ctx, req)
 	} else {
-		mysql.UpdateDoc(ctx, req)
+		err = mysql.UpdateDoc(ctx, req)
+	}
+	if err != nil {
+		logrus.Info("err: %v",err)
+		c.JSON(http.StatusOK, common.ErrorResp(common.DataBaseError,nil))
+		return
 	}
 	c.JSON(http.StatusOK,common.SuccessResp(nil))
 }

@@ -36,7 +36,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	c.SetCookie(USER, strconv.Itoa(user.Id), 0, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, common.SuccessResp(nil))
+	c.JSON(http.StatusOK, common.SuccessResp(user.Id))
 }
 
 func Logout(c *gin.Context) {

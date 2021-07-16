@@ -1,37 +1,32 @@
 package config
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/rs/xid"
 )
 
-type Lock struct{
-	isFirst 	bool
-	needUnlock 	bool
-	key 		string
-	cache 		*redis.Client
+type RedisLock struct{
+	*redis.Client
 }
 
-func (l *Lock) Lock(key string, expire time.Duration) (bool, error){
-	if l.isFirst {
-		return false, fmt.Errorf("repeat lock")
+func (l *RedisLock) GetLock(key,value string, expire time.Duration) {
+	for {
+		result := l.SetNX(key, value, expire) 
+		if result.Val() {
+			break
+		}else{
+			time.Sleep(time.Second*10)
+		}
 	}
-	l.isFirst = true
-	l.key = key
-	uuid := xid.New().String()
-	locked, err := l.cache.SetNX(l.key, uuid, expire).Result()
-	if locked {
-		l.needUnlock = true
-	}
-	return locked, err
 }
 
-func (l *Lock) Unlock() error {
-	if !l.needUnlock {
-		return nil
-	}
-	return l.cache.Del(l.key).Err()
+func (l *RedisLock) ReleaseLock(key, value string) {
+	l.Eval(`
+		if redis.call("get", KEYS[1]) == ARGV[1] then
+			return redis.call("del", KETS[1])
+		else
+			return 0
+		end
+	`, []string{key}, value)
 }

@@ -10,7 +10,7 @@ func SendEmail(mail, body string) error {
 	m.SetHeader("From",  m.FormatAddress(common.Email, "lethe"))
 	m.SetHeader("To", mail)
 	m.SetBody("text/html", body)
-	d := gomail.NewDialer(common.YandexHost, common.YandexPort, common.Email, common.EmailPassWord)
+	d := gomail.NewDialer(common.YandexHost, common.YandexPort, common.Email, common.AppPassword)
 	err := d.DialAndSend(m)
 	return err
 }
