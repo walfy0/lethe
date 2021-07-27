@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-delve/delve v1.6.0 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-runewidth v0.0.12 // indirect
@@ -15,6 +16,7 @@ require (
 	github.com/rs/xid v1.3.0
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/thinkerou/favicon v0.1.0

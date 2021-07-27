@@ -28,9 +28,13 @@ func main() {
 		v.POST("send_mail", handler.SendEmail)
 		v.POST("login", handler.Login)
 		v.GET("logout", handler.Logout)
+		v.POST("info/change", handler.ChangeInfo)
 		//doc
 		v.POST("doc/list", handler.DocList)
 		v.POST("doc/update", handler.DocUpdate)
+		//order
+		v.POST("order/list", handler.OrderList)
+		v.POST("order/create", handler.CreateOrder)
 	}
 	r.Run()
 }

@@ -33,9 +33,23 @@ func CreateUserInfo(ctx context.Context,user UserInfo) error{
 
 func GetUserByName(ctx context.Context, name string) UserInfo{
 	query := config.MysqlClient.WithContext(ctx)
-	query.Model(&UserInfo{}).Where("name = ?", name)
-	query.Where("status = ?", UserStatusOk)
+	query = query.Model(&UserInfo{}).Where("name = ?", name)
+	query = query.Where("status = ?", UserStatusOk)
 	var user UserInfo
 	query.Find(&user)
 	return user
+}
+
+func GetUserById(ctx context.Context, id int) UserInfo{
+	query := config.MysqlClient.WithContext(ctx)
+	query = query.Model(&UserInfo{}).Where("id = ?", id)
+	var user UserInfo
+	query.Find(&user)
+	return user
+}
+
+func UpdatePasswordById(ctx context.Context, id int, password string) error {
+	query := config.MysqlClient.WithContext(ctx)
+	query = query.Model(&UserInfo{}).Where("id = ?", id)
+	return query.Update("password", password).Error
 }

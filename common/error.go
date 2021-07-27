@@ -12,4 +12,6 @@ var (
 	ServiceError 		= ErrorCode{Code: "3", Message: "service error"}
 	RegisterTimeout 	= ErrorCode{Code: "4", Message: "register timeout"}
 	RegisterCodeError 	= ErrorCode{Code: "5", Message: "register code error"}
+	OrderNotEnoughError = ErrorCode{Code: "6", Message: "order num not enough"}
+	PasswordError		= ErrorCode{Code: "7", Message: "password error"}
 )

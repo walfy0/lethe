@@ -7,15 +7,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis"
 	"github.com/lethe/common"
 	"github.com/lethe/common/util"
 	"github.com/lethe/dao/kv"
 	"github.com/lethe/dao/mysql"
 	"github.com/sirupsen/logrus"
 )
-
-var USER = "UserInfo"
 
 func Test(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
@@ -35,37 +32,37 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, "password wrong!")
 		return
 	}
-	c.SetCookie(USER, strconv.Itoa(user.Id), 0, "/", "localhost", false, true)
+	c.SetCookie(common.UserId, strconv.Itoa(user.Id), 0, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, common.SuccessResp(user.Id))
 }
 
 func Logout(c *gin.Context) {
-	c.SetCookie(USER, "1", -1, "/", "localhost", false, true)
+	c.SetCookie(common.UserId, "1", -1, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, common.SuccessResp(nil))
 }
 
 func Register(c *gin.Context) {
 	req := struct{
-		Name 	 string `json:"name"`
-		Password string `json:"password"`
-		Email 	 string `json:"email"`
+		Name 	 string `json:"name" binding:"required"`
+		Password string `json:"password" binding:"required"`
+		Email 	 string `json:"email" binding:"required"`
 		Code 	 string `json:"code"`
 	}{}
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(200, common.ErrorResp(common.ParamsError,nil))
 		return 
 	}
-	code, err := kv.RedisClient.Get(req.Email).Result()
-	if err == redis.Nil {
-		c.JSON(200, common.ErrorResp(common.RegisterTimeout, nil))
-		return
-	} else if err != nil {
-		c.JSON(200, common.ErrorResp(common.ServiceError, nil))
-		return 
-	} else if code != req.Code {
-		c.JSON(200, common.ErrorResp(common.RegisterCodeError, nil))
-		return
-	}
+	// code, err := kv.RedisClient.Get(req.Email).Result()
+	// if err == redis.Nil {
+	// 	c.JSON(200, common.ErrorResp(common.RegisterTimeout, nil))
+	// 	return
+	// } else if err != nil {
+	// 	c.JSON(200, common.ErrorResp(common.ServiceError, nil))
+	// 	return 
+	// } else if code != req.Code {
+	// 	c.JSON(200, common.ErrorResp(common.RegisterCodeError, nil))
+	// 	return
+	// }
 	mysql.CreateUserInfo(c.Request.Context(), mysql.UserInfo{
 		Name: req.Name,
 		Password: req.Password,
@@ -90,5 +87,26 @@ func SendEmail(c *gin.Context) {
 		return 
 	}
 	kv.RedisClient.SetNX(req.Email, verificationCode, time.Hour)
+	c.JSON(200, common.SuccessResp(nil))
+}
+
+func ChangeInfo(c *gin.Context){
+	type ChangeInfoReq struct{
+		UserId 		int 	`json:"user_id"`
+		OldPassword string 	`json:"old_password"`
+		NewPassword string 	`json:"new_password"`
+	}
+	req := new(ChangeInfoReq)
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(200, common.ErrorResp(common.ParamsError,nil))
+		return 
+	}
+	ctx := c.Request.Context()
+	user := mysql.GetUserById(ctx, req.UserId)
+	if user.Password != req.OldPassword {
+		c.JSON(200, common.ErrorResp(common.PasswordError, nil))
+		return 
+	}
+	mysql.UpdatePasswordById(ctx, req.UserId, req.NewPassword)
 	c.JSON(200, common.SuccessResp(nil))
 }

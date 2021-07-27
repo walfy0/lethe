@@ -6,4 +6,6 @@ const (
 	Email = "lethe.walfy"
 	EmailPassWord = "87u^U*h56ht"
 	AppPassword = "zfhhwrnydjrjghxb"
+
+	UserId = "UserId"
 )

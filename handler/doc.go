@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lethe/common"
@@ -11,9 +12,12 @@ import (
 
 func DocList(c *gin.Context){
 	req := mysql.DocReq{}
+	userId, _ := c.Cookie(common.UserId)
+	Id, _ := strconv.Atoi(userId)
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(200, common.ErrorResp(common.ParamsError, nil))
 	}
+	req.UserId = &Id
 	if req.Page == 0{
 		req.Page = 1
 		req.PageSize = 20
@@ -25,7 +29,7 @@ func DocList(c *gin.Context){
 func DocUpdate(c *gin.Context){
 	req := mysql.DocInfo{}
 	if err := c.BindJSON(&req); err != nil {
-		logrus.Info("err: %v",err)
+		logrus.Info("err: ",err)
 		c.JSON(200, common.ErrorResp(common.ParamsError, nil))
 		return
 	}
@@ -37,7 +41,7 @@ func DocUpdate(c *gin.Context){
 		err = mysql.UpdateDoc(ctx, req)
 	}
 	if err != nil {
-		logrus.Info("err: %v",err)
+		logrus.Info("err: ",err)
 		c.JSON(http.StatusOK, common.ErrorResp(common.DataBaseError,nil))
 		return
 	}

@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
+	"github.com/lethe/common"
 )
 
 var ignoreURL = []string{
 	"/lethe/login",
+	"/lethe/register",
+	"/lethe/send_mail",
 }
 
 func LoginMiddleWare() gin.HandlerFunc {
@@ -17,12 +19,11 @@ func LoginMiddleWare() gin.HandlerFunc {
 				return
 			}
 		}
-		cookie, err := c.Cookie("UserInfo")
+		_, err := c.Cookie(common.UserId)
 		if err != nil {
 			c.AbortWithStatus(400)
 			return
 		}
-		logrus.Info(cookie)
 		c.Next()
 	}
 }

@@ -29,14 +29,14 @@ func (DocInfo)GetName() string {
 }
 
 func GetDocList(ctx context.Context,req DocReq) []*DocInfo {
-	query := config.MysqlClient.WithContext(ctx)
+	query := config.MysqlClient.WithContext(ctx).Model(&DocInfo{})
 	if req.Id != nil {
-		query.Where("id = ?", req.Id)
+		query = query.Where("id = ?", req.Id)
 	}
 	if req.UserId != nil {
-		query.Where("create_id = ?", req.UserId)
+		query = query.Where("creator = ?", req.UserId)
 	}
-	query.Offset((req.Page-1)*req.PageSize).Limit(req.PageSize)
+	query = query.Offset((req.Page-1)*req.PageSize).Limit(req.PageSize)
 	var list []*DocInfo
 	query.Find(&list)
 	return list
