@@ -1,2 +1,4 @@
 /.vscode
+/output
 debug
+__debug_bin

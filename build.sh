@@ -1,2 +1,8 @@
-docker restart mysql-test
-docker restart redis-test
+#!/bin/sh
+name="lethe"
+set GOARCH=adm64
+set GOSS=linux
+mkdir -p output/log
+go build -o output
+chmod +x output/${name}
+exec output/${name}
