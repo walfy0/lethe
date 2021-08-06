@@ -32,12 +32,12 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, common.ErrorResp(common.PasswordError, nil))
 		return
 	}
-	c.SetCookie(common.UserId, strconv.Itoa(user.Id), 0, "/", "localhost", false, true)
+	c.SetCookie(common.UserId, strconv.Itoa(user.Id), 0, "/", common.Host, false, true)
 	c.JSON(http.StatusOK, common.SuccessResp(user.Id))
 }
 
 func Logout(c *gin.Context) {
-	c.SetCookie(common.UserId, "1", -1, "/", "localhost", false, true)
+	c.SetCookie(common.UserId, "1", -1, "/", common.Host, false, true)
 	c.JSON(http.StatusOK, common.SuccessResp(nil))
 }
 

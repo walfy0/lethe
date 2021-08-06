@@ -7,5 +7,6 @@ const (
 	EmailPassWord = "87u^U*h56ht"
 	AppPassword = "zfhhwrnydjrjghxb"
 
+	Host = "localhost"
 	UserId = "UserId"
 )
