@@ -34,7 +34,7 @@ func GetDocList(ctx context.Context,req DocReq) []*DocInfo {
 		query = query.Where("id = ?", req.Id)
 	}
 	if req.UserId != nil {
-		query = query.Where("creator = ?", req.UserId)
+		query = query.Where("creator = ?", *req.UserId)
 	}
 	query = query.Offset((req.Page-1)*req.PageSize).Limit(req.PageSize)
 	var list []*DocInfo

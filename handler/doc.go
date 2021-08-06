@@ -16,6 +16,7 @@ func DocList(c *gin.Context){
 	Id, _ := strconv.Atoi(userId)
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(200, common.ErrorResp(common.ParamsError, nil))
+		return 
 	}
 	req.UserId = &Id
 	if req.Page == 0{

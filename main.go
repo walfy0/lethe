@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/lethe/config"
 	"github.com/lethe/handler"
+	"github.com/lethe/handler/hermes"
 	"github.com/lethe/middleware"
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/thinkerou/favicon"
 )
@@ -35,6 +36,9 @@ func main() {
 		//order
 		v.POST("order/list", handler.OrderList)
 		v.POST("order/create", handler.CreateOrder)
+		//hermes
+		v.GET("hermes/status", hermes.GetStatus)
+		v.POST("hermes/change", hermes.ChangeHermes)
 	}
 	r.Run()
 }
